@@ -7,3 +7,5 @@ export const ExpenseSchema = z.object({
   amount: z.number(),
   date: z.string(),
 });
+
+export type Expense = z.infer<typeof ExpenseSchema>;

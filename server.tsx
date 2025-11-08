@@ -45,6 +45,26 @@ Bun.serve({
       return new Response("<!DOCTYPE html>" + html, {
         headers: { "Content-Type": "text/html" },
       });
+    } else if (url.pathname.startsWith("/edit/")) {
+      const id = parseInt(url.pathname.split("/")[2]!);
+      const expense = await getExpenseById(id);
+      if (!expense) {
+        const response = new Response("Expense not found", { status: 404 });
+        logger(req, startTime, response);
+        return response;
+      }
+      const html = renderToString(
+        <Main
+          path={url.pathname}
+          expense={expense}
+          children={<CreateExpense expense={expense} />}
+        />
+      );
+      const response = new Response("<!DOCTYPE html>" + html, {
+        headers: { "Content-Type": "text/html" },
+      });
+      logger(req, startTime, response);
+      return response;
     }
     if (url.pathname.startsWith("/api/expenses")) {
       try {

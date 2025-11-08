@@ -1,8 +1,8 @@
-import type { ExpenseSchema } from "schema/validations";
+import type { Expense, ExpenseSchema } from "schema/validations";
 import * as z from "zod";
 import "./assets/tailwind.css";
 import { useEffect, useState } from "react";
-type Expense = z.infer<typeof ExpenseSchema>;
+import { toast } from "react-toastify";
 
 export default function App() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -10,9 +10,15 @@ export default function App() {
 
   useEffect(() => {
     const fetchExpenses = async () => {
-      const response = await fetch("/api/expenses");
-      const data = await response.json();
-      setExpenses(data);
+      try {
+        const response = await fetch("/api/expenses");
+        if (!response.ok) throw new Error("Failed to fetch expenses");
+        const data = await response.json();
+        setExpenses(data);
+      } catch (err) {
+        console.error("Error fetching expenses:", err);
+        toast.error("Failed to load expenses");
+      }
     };
     fetchExpenses();
   }, []);
@@ -28,11 +34,13 @@ export default function App() {
 
       if (response.ok) {
         setExpenses((prev) => prev.filter((e) => e.id !== id));
+        toast.success("Expense deleted successfully");
       } else {
-        console.error("Failed to delete expense");
+        throw new Error("Failed to delete expense");
       }
     } catch (err) {
       console.error("Error deleting expense:", err);
+      toast.error("Failed to delete expense. Please try again");
     } finally {
       setDeletingId(null);
     }
@@ -42,7 +50,9 @@ export default function App() {
     <div className="p-4 max-w-4xl mx-auto">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold mb-6">Expense Tracker</h1>
-        <a href="/create">Create Expense</a>
+        <a href="/create" className="underline">
+          Create Expense
+        </a>
       </div>
       <div className="border rounded-lg overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
@@ -66,7 +76,7 @@ export default function App() {
             {expenses.length === 0 ? (
               <tr>
                 <td
-                  colSpan={3}
+                  colSpan={4}
                   className="px-6 py-4 text-center text-sm text-gray-500"
                 >
                   No expenses found
@@ -85,18 +95,26 @@ export default function App() {
                     {new Date(expense.date).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <button
-                      onClick={() => handleDelete(expense.id)}
-                      disabled={deletingId === expense.id}
-                      style={{ cursor: "pointer" }}
-                      className={`${
-                        deletingId === expense.id
-                          ? "text-gray-400 opacity-50"
-                          : "text-red-500 hover:text-red-700"
-                      }`}
-                    >
-                      {deletingId === expense.id ? "Deleting..." : "Delete"}
-                    </button>
+                    <div className="flex gap-4">
+                      <a
+                        href={`/edit/${expense.id}`}
+                        className="text-blue-500 hover:text-blue-700"
+                      >
+                        Edit
+                      </a>
+                      <button
+                        onClick={() => handleDelete(expense.id)}
+                        disabled={deletingId === expense.id}
+                        style={{ cursor: "pointer" }}
+                        className={`${
+                          deletingId === expense.id
+                            ? "text-gray-400 opacity-50"
+                            : "text-red-500 hover:text-red-700"
+                        }`}
+                      >
+                        {deletingId === expense.id ? "Deleting..." : "Delete"}
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))
