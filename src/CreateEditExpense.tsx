@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import * as z from "zod";
-import { toast } from "sonner";
 import type { Expense } from "schema/validations";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
@@ -50,7 +49,7 @@ export default function CreateEditExpense({ expense }: { expense?: Expense }) {
     });
 
     if (!parsed.success) {
-      toast.info("Fill all fields correctly");
+      console.info("Fill all fields correctly");
       return;
     }
 
@@ -69,12 +68,6 @@ export default function CreateEditExpense({ expense }: { expense?: Expense }) {
       if (!res.ok)
         throw new Error(`Failed to ${isEditing ? "update" : "create"} expense`);
 
-      toast.success(
-        `Expense ${
-          isEditing ? "updated" : "created"
-        } successfully! ${title} - $${amount}`
-      );
-
       if (!isEditing) {
         setTitle("");
         setAmount("");
@@ -86,11 +79,6 @@ export default function CreateEditExpense({ expense }: { expense?: Expense }) {
       }, 2000);
     } catch (err) {
       console.error(err);
-      toast.error(
-        `Failed to ${
-          isEditing ? "update" : "create"
-        } expense. Please try again later`
-      );
     } finally {
       setLoading(false);
     }

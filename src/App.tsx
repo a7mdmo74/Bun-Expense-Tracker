@@ -1,7 +1,6 @@
 import type { Expense } from "schema/validations";
 import "./assets/tailwind.css";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import { Button } from "@/src/components/ui/button";
 import {
   Card,
@@ -46,7 +45,6 @@ export default function App() {
         setExpenses(data);
       } catch (err) {
         console.error("Error fetching expenses:", err);
-        toast.error("Failed to load expenses");
       } finally {
         setIsLoading(false);
       }
@@ -61,10 +59,8 @@ export default function App() {
       if (!response.ok) throw new Error("Failed to delete expense");
 
       setExpenses((prev) => prev.filter((e) => e.id !== id));
-      toast.success("Expense deleted successfully");
     } catch (err) {
       console.error("Error deleting expense:", err);
-      toast.error("Failed to delete expense. Please try again");
     } finally {
       setDeletingId(null);
       setOpenDialogId(null);

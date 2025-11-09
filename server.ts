@@ -5,6 +5,7 @@ import { handleApiRoutes } from "@/api/expenses";
 
 const server = Bun.serve({
   port: 3000,
+
   async fetch(req) {
     const startTime = Date.now();
     const staticResponse = await serveStatic(req);

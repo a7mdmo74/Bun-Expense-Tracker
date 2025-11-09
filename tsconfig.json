@@ -37,11 +37,11 @@
     "src/**/*.tsx",
     "schema/**/*.ts",
     "routes/**/*.tsx",
-    "server.tsx",
+    "server.ts",
     "utils/**/*.ts",
     "middleware/logger.ts",
     "middleware/static.ts"
   ],
-  "files": ["server.tsx", "schema/validations.ts"],
+  "files": ["server.ts", "schema/validations.ts"],
   "exclude": ["node_modules", "public", "dist", "build", "routes/example.ts"]
 }
