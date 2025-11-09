@@ -9,10 +9,10 @@ import {
   getExpenses,
   getExpenseById,
   updateExpense,
-} from "./utils/db";
-import Main from "@/Main";
-import App from "@/App";
-import CreateExpense from "@/CreateExpense";
+} from "./db";
+import Main from "@/src/Main";
+import App from "@/src/App";
+import CreateEditExpense from "@/src/CreateEditExpense";
 Bun.serve({
   port: 3000,
   async fetch(req) {
@@ -40,7 +40,7 @@ Bun.serve({
       return response;
     } else if (url.pathname === "/create") {
       const html = renderToString(
-        <Main path={url.pathname} children={<CreateExpense />} />
+        <Main path={url.pathname} children={<CreateEditExpense />} />
       );
       return new Response("<!DOCTYPE html>" + html, {
         headers: { "Content-Type": "text/html" },
@@ -57,7 +57,7 @@ Bun.serve({
         <Main
           path={url.pathname}
           expense={expense}
-          children={<CreateExpense expense={expense} />}
+          children={<CreateEditExpense expense={expense} />}
         />
       );
       const response = new Response("<!DOCTYPE html>" + html, {

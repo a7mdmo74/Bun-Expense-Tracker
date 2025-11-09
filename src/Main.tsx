@@ -1,5 +1,3 @@
-import { ToastContainer } from "react-toastify";
-
 export default function Main({
   children,
   path,
@@ -15,27 +13,12 @@ export default function Main({
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Expense Tracker</title>
-        <link
-          rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/react-toastify@10/dist/ReactToastify.css"
-        />
+        <link rel="icon" href="/favicon.ico" />
+
         <link href="/assets/tailwind.css" rel="stylesheet" />
       </head>
       <body>
-        <div id="root">
-          {children}
-          <ToastContainer
-            position="top-right"
-            autoClose={3000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-          />
-        </div>
+        <div id="root">{children}</div>
 
         <script
           dangerouslySetInnerHTML={{

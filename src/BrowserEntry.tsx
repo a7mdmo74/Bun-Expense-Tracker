@@ -1,8 +1,8 @@
 import { hydrateRoot } from "react-dom/client";
-import { ToastContainer } from "react-toastify";
 import App from "./App";
-import CreateExpense from "@/CreateExpense";
 import type { Expense } from "schema/validations";
+import CreateEditExpense from "@/src/CreateEditExpense";
+import { Toaster } from "@/src/components/ui/sonner";
 
 declare global {
   interface Window {
@@ -16,26 +16,15 @@ const expense = window.__EXPENSE__;
 let Page = <App />;
 
 if (path === "/create") {
-  Page = <CreateExpense />;
+  Page = <CreateEditExpense />;
 } else if (path.startsWith("/edit/")) {
-  Page = <CreateExpense expense={expense} />;
+  Page = <CreateEditExpense expense={expense} />;
 }
 
-// Wrap with ToastContainer
 hydrateRoot(
   document.getElementById("root")!,
   <>
     {Page}
-    <ToastContainer
-      position="top-right"
-      autoClose={3000}
-      hideProgressBar={false}
-      newestOnTop={false}
-      closeOnClick
-      rtl={false}
-      pauseOnFocusLoss
-      draggable
-      pauseOnHover
-    />
+    <Toaster position="top-center" />
   </>
 );

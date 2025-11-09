@@ -1,12 +1,38 @@
-import type { Expense, ExpenseSchema } from "schema/validations";
-import * as z from "zod";
+import type { Expense } from "schema/validations";
 import "./assets/tailwind.css";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
+import { Button } from "@/src/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/src/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/src/components/ui/table";
+import { Badge } from "@/src/components/ui/badge";
+import { Plus, Pencil, Trash2, DollarSign } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/src/components/ui/dialog";
 
 export default function App() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [openDialogId, setOpenDialogId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchExpenses = async () => {
@@ -24,8 +50,6 @@ export default function App() {
   }, []);
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this expense?")) return;
-
     setDeletingId(id);
     try {
       const response = await fetch(`/api/expenses/${id}`, {
@@ -43,84 +67,145 @@ export default function App() {
       toast.error("Failed to delete expense. Please try again");
     } finally {
       setDeletingId(null);
+      setOpenDialogId(null);
     }
   };
 
+  const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+
   return (
-    <div className="p-4 max-w-4xl mx-auto">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold mb-6">Expense Tracker</h1>
-        <a href="/create" className="underline">
-          Create Expense
-        </a>
-      </div>
-      <div className="border rounded-lg overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Title
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Amount
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Date
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 p-4 md:p-8">
+      <div className="max-w-6xl mx-auto space-y-6">
+        {/* Header Section */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold tracking-tight">
+              Expense Tracker
+            </h1>
+          </div>
+          <Button asChild size="lg">
+            <a href="/create">
+              <Plus className="mr-2 h-4 w-4" />
+              Add Expense
+            </a>
+          </Button>
+        </div>
+
+        {/* Expenses Table */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Expenses</CardTitle>
+            <CardDescription>
+              A list of all your tracked expenses
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
             {expenses.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={4}
-                  className="px-6 py-4 text-center text-sm text-gray-500"
-                >
+              <div className="text-center py-12">
+                <p className="text-muted-foreground text-lg">
                   No expenses found
-                </td>
-              </tr>
+                </p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Get started by adding your first expense
+                </p>
+                <Button asChild className="mt-4">
+                  <a href="/create">
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add Your First Expense
+                  </a>
+                </Button>
+              </div>
             ) : (
-              expenses.map((expense) => (
-                <tr key={expense.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {expense.title}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${expense.amount}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(expense.date).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <div className="flex gap-4">
-                      <a
-                        href={`/edit/${expense.id}`}
-                        className="text-blue-500 hover:text-blue-700"
-                      >
-                        Edit
-                      </a>
-                      <button
-                        onClick={() => handleDelete(expense.id)}
-                        disabled={deletingId === expense.id}
-                        style={{ cursor: "pointer" }}
-                        className={`${
-                          deletingId === expense.id
-                            ? "text-gray-400 opacity-50"
-                            : "text-red-500 hover:text-red-700"
-                        }`}
-                      >
-                        {deletingId === expense.id ? "Deleting..." : "Delete"}
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Title</TableHead>
+                    <TableHead>Amount</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {expenses.map((expense) => (
+                    <TableRow key={expense.id}>
+                      <TableCell className="font-medium">
+                        {expense.title}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="secondary">
+                          <DollarSign />
+                          {expense.amount.toFixed(2)}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {new Date(expense.date).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button variant="ghost" size="sm" asChild>
+                            <a href={`/edit/${expense.id}`}>
+                              <Pencil className="h-4 w-4" />
+                            </a>
+                          </Button>
+
+                          {/* Delete Button + Dialog */}
+                          <Dialog
+                            open={openDialogId === expense.id}
+                            onOpenChange={(open) =>
+                              setOpenDialogId(open ? expense.id : null)
+                            }
+                          >
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setOpenDialogId(expense.id)}
+                              className="text-destructive hover:text-destructive"
+                              disabled={deletingId === expense.id}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+
+                            <DialogContent>
+                              <DialogHeader>
+                                <DialogTitle>Delete Expense</DialogTitle>
+                                <DialogDescription>
+                                  Are you sure you want to delete “
+                                  {expense.title}”? This action cannot be
+                                  undone.
+                                </DialogDescription>
+                              </DialogHeader>
+                              <DialogFooter>
+                                <Button
+                                  variant="outline"
+                                  onClick={() => setOpenDialogId(null)}
+                                >
+                                  Cancel
+                                </Button>
+                                <Button
+                                  variant="destructive"
+                                  onClick={() => handleDelete(expense.id)}
+                                  disabled={deletingId === expense.id}
+                                >
+                                  {deletingId === expense.id
+                                    ? "Deleting..."
+                                    : "Delete"}
+                                </Button>
+                              </DialogFooter>
+                            </DialogContent>
+                          </Dialog>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             )}
-          </tbody>
-        </table>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

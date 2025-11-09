@@ -1,4 +1,3 @@
-// src/server/middleware/static.ts
 export async function serveStatic(req: Request) {
   const url = new URL(req.url);
   const pathname = url.pathname;
@@ -12,7 +11,6 @@ export async function serveStatic(req: Request) {
       entrypoints: ["./src/client/client.tsx"],
       target: "browser",
       format: "esm",
-      minify: false, // true for prod
     });
 
     if (!bundle.success) {
