@@ -99,7 +99,6 @@ export default function CreateEditExpense({ expense }: { expense?: Expense }) {
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 p-4 md:p-8">
       <div className="max-w-2xl mx-auto space-y-6">
-        {/* Back Button */}
         <Button variant="ghost" asChild>
           <a href="/">
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -107,7 +106,6 @@ export default function CreateEditExpense({ expense }: { expense?: Expense }) {
           </a>
         </Button>
 
-        {/* Form Card */}
         <Card>
           <CardHeader>
             <CardTitle className="text-3xl">
@@ -121,7 +119,6 @@ export default function CreateEditExpense({ expense }: { expense?: Expense }) {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Title Field */}
               <div className="space-y-2">
                 <Label htmlFor="title">Title</Label>
                 <Input
@@ -134,7 +131,6 @@ export default function CreateEditExpense({ expense }: { expense?: Expense }) {
                 />
               </div>
 
-              {/* Amount Field */}
               <div className="space-y-2">
                 <Label htmlFor="amount">Amount</Label>
                 <div className="relative">
@@ -154,7 +150,6 @@ export default function CreateEditExpense({ expense }: { expense?: Expense }) {
                 </div>
               </div>
 
-              {/* Date Field with Calendar */}
               <div className="space-y-2">
                 <Label>Date</Label>
                 <div className="relative">
@@ -199,7 +194,6 @@ export default function CreateEditExpense({ expense }: { expense?: Expense }) {
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-3 pt-4">
                 <Button
                   type="submit"

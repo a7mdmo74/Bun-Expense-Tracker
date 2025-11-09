@@ -39,5 +39,5 @@ export async function handlePageRoutes(url: URL) {
     });
   }
 
-  return null; // No matching page route
+  return null;
 }

@@ -8,7 +8,6 @@ A server-side rendered React expense tracker built with Bun, Tailwind CSS, and s
 - ⚛️ **React SSR** - Server-side rendering with React
 - 🎨 **Tailwind CSS** - Utility-first CSS framework
 - 🧩 **shadcn/ui** - Beautiful, accessible component library
-- 🔥 **Hot Reload** - Fast development with Bun's watch mode
 
 ## Getting Started
 
