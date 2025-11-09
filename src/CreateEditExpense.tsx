@@ -129,7 +129,7 @@ export default function CreateEditExpense({ expense }: { expense?: Expense }) {
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="e.g., Grocery Shopping"
+                  placeholder="e.g., Coffee, Groceries"
                   required
                 />
               </div>
