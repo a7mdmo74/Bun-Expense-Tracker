@@ -1,6 +1,6 @@
 import { hydrateRoot } from "react-dom/client";
-import App from "./App";
-import CreateEditExpense from "@/src/CreateEditExpense";
+import App from "./Pages/Home";
+import CreateEditExpense from "@/src/Pages/CreateEditExpense";
 
 declare global {
   interface Window {

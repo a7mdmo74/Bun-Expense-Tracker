@@ -1,8 +1,10 @@
 import { renderToString } from "react-dom/server";
 import Main from "@/src/Main";
-import App from "@/src/App";
-import CreateEditExpense from "@/src/CreateEditExpense";
-import { getExpenseById } from "../db";
+import App from "@/src/Pages/Home";
+import CreateEditExpense from "@/src/Pages/CreateEditExpense";
+import LoginPage from "@/src/Pages/Login";
+import { getExpenseById } from "../db/expense";
+import SignupPage from "@/src/Pages/Signup";
 
 export async function handlePageRoutes(url: URL) {
   if (url.pathname === "/") {
@@ -15,6 +17,24 @@ export async function handlePageRoutes(url: URL) {
   if (url.pathname === "/create") {
     const html = renderToString(
       <Main path={url.pathname} children={<CreateEditExpense />} />
+    );
+    return new Response("<!DOCTYPE html>" + html, {
+      headers: { "Content-Type": "text/html" },
+    });
+  }
+
+  if (url.pathname === "/login") {
+    const html = renderToString(
+      <Main path={url.pathname} children={<LoginPage />} />
+    );
+    return new Response("<!DOCTYPE html>" + html, {
+      headers: { "Content-Type": "text/html" },
+    });
+  }
+
+  if (url.pathname === "/signup") {
+    const html = renderToString(
+      <Main path={url.pathname} children={<SignupPage />} />
     );
     return new Response("<!DOCTYPE html>" + html, {
       headers: { "Content-Type": "text/html" },
@@ -34,9 +54,6 @@ export async function handlePageRoutes(url: URL) {
         children={<CreateEditExpense expense={expense} />}
       />
     );
-    return new Response("<!DOCTYPE html>" + html, {
-      headers: { "Content-Type": "text/html" },
-    });
   }
 
   return null;

@@ -1,8 +1,8 @@
 import { serveStatic } from "./middleware/static";
 import { logger } from "./middleware/logger";
 import { handlePageRoutes } from "@/routes/pages";
-import { handleApiRoutes } from "@/api/expenses";
-
+import { handleExpenseApiRoutes } from "@/api/expenses.routes";
+import { handleUsersApiRoutes } from "@/api/users.routes";
 const server = Bun.serve({
   port: 3000,
 
@@ -24,10 +24,15 @@ const server = Bun.serve({
     }
 
     // API routes
-    const apiResponse = await handleApiRoutes(req, url);
-    if (apiResponse) {
-      logger(req, startTime, apiResponse);
-      return apiResponse;
+    const apiExpensesResponse = await handleExpenseApiRoutes(req, url);
+    if (apiExpensesResponse) {
+      logger(req, startTime, apiExpensesResponse);
+      return apiExpensesResponse;
+    }
+    const apiUsersResponse = await handleUsersApiRoutes(req, url);
+    if (apiUsersResponse) {
+      logger(req, startTime, apiUsersResponse);
+      return apiUsersResponse;
     }
 
     // page routes

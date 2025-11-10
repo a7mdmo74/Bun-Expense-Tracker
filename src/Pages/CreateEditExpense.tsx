@@ -24,6 +24,17 @@ const ExpenseSchema = z.object({
 
 export default function CreateEditExpense({ expense }: { expense?: Expense }) {
   const isEditing = !!expense;
+  // Read user from sessionStorage. Stored as JSON string under "user" on login.
+  let userData: { id?: number } | null = null;
+  try {
+    userData =
+      typeof window !== "undefined"
+        ? JSON.parse(sessionStorage.getItem("user") || "null")
+        : null;
+  } catch (e) {
+    userData = null;
+  }
+  const userId = userData?.id;
 
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
@@ -41,6 +52,12 @@ export default function CreateEditExpense({ expense }: { expense?: Expense }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // require a logged-in user
+    if (!userId) {
+      // If there's no user in session, send them to login
+      window.location.href = "/login";
+      return;
+    }
 
     const parsed = ExpenseSchema.safeParse({
       title,
@@ -59,10 +76,15 @@ export default function CreateEditExpense({ expense }: { expense?: Expense }) {
       const url = isEditing ? `/api/expenses/${expense.id}` : "/api/expenses";
       const method = isEditing ? "PUT" : "POST";
 
+      // Include user_id in the request body so the server can associate the expense
+      const requestBody = isEditing
+        ? { ...parsed.data, user_id: expense?.user_id ?? userId }
+        : { ...parsed.data, user_id: userId };
+
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(parsed.data),
+        body: JSON.stringify(requestBody),
       });
 
       if (!res.ok)
@@ -74,9 +96,7 @@ export default function CreateEditExpense({ expense }: { expense?: Expense }) {
         setDate(undefined);
       }
 
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 2000);
+      window.location.href = "/";
     } catch (err) {
       console.error(err);
     } finally {

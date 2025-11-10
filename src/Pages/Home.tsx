@@ -1,5 +1,5 @@
 import type { Expense } from "schema/validations";
-import "./assets/tailwind.css";
+import "../assets/tailwind.css";
 import { useEffect, useState } from "react";
 import { Button } from "@/src/components/ui/button";
 import {
@@ -18,7 +18,7 @@ import {
   TableRow,
 } from "@/src/components/ui/table";
 import { Badge } from "@/src/components/ui/badge";
-import { Plus, Pencil, Trash2, DollarSign } from "lucide-react";
+import { Plus, Pencil, Trash2, DollarSign, LogIn } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -29,11 +29,17 @@ import {
 } from "@/src/components/ui/dialog";
 import { Skeleton } from "@/src/components/ui/skeleton";
 
-export default function App() {
+export default function Home() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [openDialogId, setOpenDialogId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLogged, setIsLogged] = useState(false);
+
+  useEffect(() => {
+    const user = window.sessionStorage.user;
+    user !== null ? setIsLogged(true) : setIsLogged(false);
+  }, []);
 
   useEffect(() => {
     const fetchExpenses = async () => {
@@ -72,11 +78,20 @@ export default function App() {
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-4xl font-bold tracking-tight">Expense Tracker</h1>
-          <Button asChild size="lg">
-            <a href="/create">
-              <Plus className="mr-2 h-4 w-4" /> Add Expense
-            </a>
-          </Button>
+          <div className="flex items-center justify-center gap-4">
+            <Button asChild size="lg">
+              <a href="/create">
+                <Plus className="mr-2 h-4 w-4" /> Add Expense
+              </a>
+            </Button>
+            {!isLogged && (
+              <Button asChild size="lg">
+                <a href="/login">
+                  <LogIn className="mr-2 h-4 w-4" /> Login
+                </a>
+              </Button>
+            )}
+          </div>
         </div>
 
         <Card>

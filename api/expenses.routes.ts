@@ -4,9 +4,9 @@ import {
   createExpense,
   updateExpense,
   deleteExpense,
-} from "../db";
+} from "../db/expense";
 
-export async function handleApiRoutes(req: Request, url: URL) {
+export async function handleExpenseApiRoutes(req: Request, url: URL) {
   if (!url.pathname.startsWith("/api/expenses")) return null;
 
   try {
@@ -25,7 +25,7 @@ export async function handleApiRoutes(req: Request, url: URL) {
 
     if (req.method === "POST" && url.pathname === "/api/expenses") {
       const body = await req.json();
-      const expense = await createExpense({ ...body, user_id: 1 });
+      const expense = await createExpense({ ...body });
       return Response.json(expense, { status: 201 });
     }
 

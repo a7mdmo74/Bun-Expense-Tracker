@@ -1,10 +1,7 @@
+import type { Expense } from "@/schema/validations";
 import { Database } from "bun:sqlite";
-import { z } from "zod";
-import { ExpenseSchema } from "@/schema/validations";
 
 export const db = new Database("mydb.sqlite");
-
-type Expense = z.infer<typeof ExpenseSchema>;
 
 db.run(`
   CREATE TABLE IF NOT EXISTS expenses (
@@ -63,10 +60,7 @@ export async function updateExpense(
   id: number,
   data: Partial<Omit<Expense, "id" | "date">>
 ): Promise<Expense | null> {
-  const existing = getExpenseById(id);
-  if (!existing) return null;
-
-  const existingData = await existing;
+  const existingData = await getExpenseById(id);
   if (!existingData) return null;
 
   const title = data.title ?? existingData.title;
